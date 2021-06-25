@@ -7,6 +7,7 @@
 
 #define WINDOW_WIDTH (530)
 #define WINDOW_HEIGHT (746)
+#define INTENSITY (-16)
 
 int main() {
   start_devices();
@@ -73,7 +74,6 @@ int main() {
 
     // get and scale the dimensions of texture
     SDL_QueryTexture(tex, NULL, NULL, &dest.w, &dest.h);
-    SDL_QueryTexture(tex, NULL, NULL, &dest.w, &dest.h);
     /*float ratio;
     if (WINDOW_HEIGHT < WINDOW_WIDTH) {
        ratio =  WINDOW_HEIGHT / dest.h;
@@ -105,9 +105,9 @@ int main() {
         SDL_RenderClear(rend);
         // draw the image to the window
         double vol = get_volume_level();
-
+        dest.y = (int) log10(vol) * INTENSITY + 50;
         if (vol < 3000) {
-        SDL_RenderCopy(rend, tex, NULL, &dest);
+          SDL_RenderCopy(rend, tex, NULL, &dest);
         } else {
           SDL_RenderCopy(rend, tex2, NULL, &dest);
         }
