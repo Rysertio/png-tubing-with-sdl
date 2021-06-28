@@ -7,7 +7,9 @@
 
 #define WINDOW_WIDTH (530)
 #define WINDOW_HEIGHT (746)
-#define INTENSITY (-16)
+#define JUMP_INTENSITY (-20)
+#define BLINK_RATE (10)
+#define BLINK_TIME (1)
 
 int main() {
   start_devices();
@@ -45,7 +47,9 @@ int main() {
     // load the image into memory using SDL_image library function
     SDL_Surface* surface = IMG_Load("resources/cm.png");
     SDL_Surface* surface2 = IMG_Load("resources/om.png");
-    if (!surface|!surface2)
+    SDL_Surface* surface3 = IMG_Load("resources/ce.png");
+
+    if (!surface|!surface2 | !surface3)
     {
         printf("error creating surface\n");
         SDL_DestroyRenderer(rend);
@@ -57,10 +61,13 @@ int main() {
     // load the image data into the graphics hardware's memory
     SDL_Texture* tex = SDL_CreateTextureFromSurface(rend, surface);
     SDL_Texture* tex2 = SDL_CreateTextureFromSurface(rend, surface2);
+    SDL_Texture* tex3 = SDL_CreateTextureFromSurface(rend, surface3);
+
     SDL_FreeSurface(surface);
     SDL_FreeSurface(surface2);
+    SDL_FreeSurface(surface3);
 
-    if (!tex|!tex2)
+    if (!tex|!tex2| !tex3)
     {
         printf("error creating texture: %s\n", SDL_GetError());
         SDL_DestroyRenderer(rend);
@@ -87,7 +94,7 @@ int main() {
 
     // set to 1 when window close button is pressed
     int close_requested = 0;
-    
+    int blink_timer = 0;
     // animation loop
     while (!close_requested)
     {
@@ -105,13 +112,23 @@ int main() {
         SDL_RenderClear(rend);
         // draw the image to the window
         double vol = get_volume_level();
-        dest.y = (int) log10(vol) * INTENSITY + 50;
-        if (vol < 3000) {
-          SDL_RenderCopy(rend, tex, NULL, &dest);
-        } else {
+        dest.y = 0;
+
+        if (vol > 3000) {
+          dest.y = JUMP_INTENSITY;
           SDL_RenderCopy(rend, tex2, NULL, &dest);
+        } else if (blink_timer > BLINK_RATE) {
+          SDL_RenderCopy(rend, tex3, NULL, &dest);
+        } else {
+          SDL_RenderCopy(rend, tex, NULL, &dest);
         }
+
         SDL_RenderPresent(rend);
+
+        if (blink_timer > (BLINK_RATE + BLINK_TIME)){
+          blink_timer =0;
+        }
+        blink_timer += 1;
 
         // wait 1/60th of a second
         SDL_Delay(1000/60);
@@ -125,5 +142,3 @@ int main() {
     destroy_volume_level(); 
   return 0;
 }
-
-
