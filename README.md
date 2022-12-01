@@ -6,7 +6,7 @@ A very simple PNG tubing application written in c for linux. It uses the sdl lib
 2. If you're on a Debian based distro run     
  ``sudo apt-get install build-essential make git libsdl2-dev libsdl2-image-dev libasound2-dev ``
 3. If you're on a Arch based distro run     
-  ``sudo pacman -S base-devel make git libsdl2-dev libsdl2-image-dev libasound2-dev ``
+  ``sudo pacman -S base-devel make git sdl2_image ``
 4. Clone this repo and run `make`     
 
 ```
